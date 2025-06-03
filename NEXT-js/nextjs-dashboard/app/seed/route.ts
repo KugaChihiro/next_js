@@ -12,22 +12,22 @@ async function seedUsers() {
       name VARCHAR(255) NOT NULL,
       email TEXT NOT NULL UNIQUE,
       password TEXT NOT NULL
-    );
+    )
   `;
-
   const insertedUsers = await Promise.all(
     users.map(async (user) => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       return sql`
-        INSERT INTO users (id, name, email, password)
-        VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
-        ON CONFLICT (id) DO NOTHING;
+        INSERT INTO users (name, email, password)
+        VALUES (${user.name}, ${user.email}, ${hashedPassword})
+        ON CONFLICT (email) DO NOTHING
       `;
-    }),
+    })
   );
 
   return insertedUsers;
 }
+
 
 async function seedInvoices() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
